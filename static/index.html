@@ -12,8 +12,21 @@
     <style>
 
      @keyframes spin {
-         0%  {transform: rotate(0deg);}
-         100% {transform: rotate(360deg);}
+         0%  {
+             transform: rotate(0deg);
+         }
+         100% {
+             transform: rotate(360deg);
+         }
+     }
+
+     @keyframes pulse {
+         0% {
+             box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+         }
+         100% {
+             box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+         }
     }
 
      .status-section {
@@ -25,9 +38,13 @@
      }
 
      .power-button, .power-loading {
-         /* border-radius: 50%; */
+         border-radius: 50%;
          width: 7em;
          height: 7em;
+     }
+
+     .power-loading {
+         animation: pulse 1s infinite linear;
      }
 
      .power-loading svg {
@@ -38,7 +55,6 @@
      }
     </style>
 
-    <!-- <script src="https://unpkg.com/petite-vue" defer init></script> -->
     <script src="https://unpkg.com/feather-icons"></script>
     <script type="module" src="index.js" defer init></script>
 
@@ -53,7 +69,10 @@
                 <div class="button has-text-centered power-loading" v-show="agentStatus.status == 'loading'">
                     <i data-feather="loader"></i>
                 </div>
-                <button class="button has-text-centered power-button" :class="powerButtonClass"  v-show="agentStatus.status != 'loading'">
+                <button class="button has-text-centered power-button"
+                        :class="powerButtonClass"
+                        v-show="agentStatus.status != 'loading'"
+                        @click="doTogglePower">
                     <i data-feather="power"></i>
                 </button>
             </div>

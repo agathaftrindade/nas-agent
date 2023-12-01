@@ -1,19 +1,18 @@
 const { ListTablesCommand } = require("@aws-sdk/client-dynamodb")
-const { PutCommand, DynamoDBDocument } = require("@aws-sdk/lib-dynamodb")
+const { DynamoDBDocument, PutCommand, DeleteCommand } = require("@aws-sdk/lib-dynamodb")
 
-function formatTime(s) {
-    return new Date(s).toISOString()
-}
+const TABLE_NAME = 'PowerCommands'
+const DEVICE = 'nas-agent'
 
-function sonoffConnection() {
-    const connection = new ewelink({
-        email: '',
-        password: '',
-        region: 'us',
-    })
+// function sonoffConnection() {
+//     const connection = new ewelink({
+//         email: '',
+//         password: '',
+//         region: 'us',
+//     })
 
-    return connection
-}
+//     return connection
+// }
 
 module.exports = class PowerService {
     constructor(dynamoDB) {
@@ -21,15 +20,55 @@ module.exports = class PowerService {
         this.docClient = DynamoDBDocument.from(dynamoDB)
     }
 
+    async fetchCommand() {
+        console.log('fetching commands')
+        const response = await this.docClient.query({
+            TableName: TABLE_NAME,
+            KeyConditionExpression: 'Device = :deviceValue',
+            ExpressionAttributeValues: {
+                ':deviceValue': DEVICE
+            },
+            Limit: 1
+        })
+
+        if(!response.Items.length)
+            return {}
+
+        return {
+            device: DEVICE,
+            timestamp: response.Items[0].Timestamp,
+            action: response.Items[0].Action,
+        }
+    }
+
+    async ackCommand(device, timestamp) {
+        console.log(`Acking command ${device}:${timestamp}`)
+
+        const command = new DeleteCommand({
+            TableName: TABLE_NAME,
+            Key: {
+                'Device': device,
+                'Timestamp': timestamp
+            }
+        })
+
+        await this.docClient.send(command)
+    }
+
     async powerOn() {
-        // activate sonoff
+        // TOOD activate sonoff
+    }
+
+    async powerOff() {
+        console.log('shutting down')
+        process.exit()
     }
 
     async schedulePoweroff() {
         const command = new PutCommand({
-            TableName: "PowerCommands",
+            TableName: TABLE_NAME,
             Item: {
-                Device: "nas-agent",
+                Device: DEVICE,
                 Timestamp: Date.now(),
                 Action: 'poweroff'
             }

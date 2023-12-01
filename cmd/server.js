@@ -9,7 +9,7 @@ function setupRoutes(app, healthService, powerService) {
     app.use(express.static('static'))
 
     app.get('/health', async (req, res) => {
-        const lastPing = await healthService.fetchAll()
+        const lastPing = await healthService.fetchStatus()
         res
             .status(200)
             .send({
