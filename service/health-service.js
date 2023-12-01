@@ -1,11 +1,14 @@
 const { ListTablesCommand } = require("@aws-sdk/client-dynamodb")
-const { PutCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb")
+const { PutCommand, DynamoDBDocument } = require("@aws-sdk/lib-dynamodb")
 
+function formatTime(s) {
+    return new Date(s).toISOString()
+}
 
 module.exports = class HealthService {
     constructor(dynamoDB) {
         this.dynamoDB = dynamoDB
-        this.docClient = DynamoDBDocumentClient.from(dynamoDB)
+        this.docClient = DynamoDBDocument.from(dynamoDB)
     }
 
     async publish() {
@@ -13,7 +16,8 @@ module.exports = class HealthService {
             TableName: "HealthUpdates",
             Item: {
                 Device: "nas-agent",
-                Timestamp: Date.now()
+                Timestamp: Date.now(),
+                State: 'on'
             }
         })
 
@@ -21,7 +25,26 @@ module.exports = class HealthService {
     }
 
     async fetchAll() {
-        console.log('reading health updates')
+        const device = 'nas-agent'
+
+        const response = await this.docClient.get({
+            TableName: 'HealthUpdates',
+            Key: {
+                Device: device
+            },
+        })
+
+        if(!response.Item)
+            return {
+                device,
+                lastState: 'unknown'
+            }
+
+        return {
+            device: device,
+            lastActive: formatTime(response.Item.Timestamp),
+            lastState: response.Item.State
+        }
     }
 }
 

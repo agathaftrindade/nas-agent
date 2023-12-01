@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HTML 5 Boilerplate</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+
+    <style>
+
+     @keyframes spin {
+         0%  {transform: rotate(0deg);}
+         100% {transform: rotate(360deg);}
+    }
+
+     .status-section {
+         margin-top: 2em;
+     }
+
+     .button-container {
+         margin-top: 0.5em;
+     }
+
+     .power-button, .power-loading {
+         /* border-radius: 50%; */
+         width: 7em;
+         height: 7em;
+     }
+
+     .power-loading svg {
+         animation: spin 4s infinite linear;
+     }
+
+     .power-button.on {
+     }
+    </style>
+
+    <!-- <script src="https://unpkg.com/petite-vue" defer init></script> -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script type="module" src="index.js" defer init></script>
+
+  </head>
+  <body v-scope  @vue:mounted="mounted">
+
+    <div class="container status-section">
+        <h1 class="title-1 has-text-centered">NAS Status</h1>
+        <div class="button-container columns is-mobile">
+            <div class="column"></div>
+            <div class="">
+                <div class="button has-text-centered power-loading" v-show="agentStatus.status == 'loading'">
+                    <i data-feather="loader"></i>
+                </div>
+                <button class="button has-text-centered power-button" :class="powerButtonClass"  v-show="agentStatus.status != 'loading'">
+                    <i data-feather="power"></i>
+                </button>
+            </div>
+            <div class="column"></div>
+        </div>
+        <article v-show="statusMessage.text" class="message is-warning">
+            <div class="message-body">
+                {{statusMessage.text}}
+            </div>
+        </article>
+    </div>
+  </body>
+</html>
