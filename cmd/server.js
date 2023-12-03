@@ -42,7 +42,7 @@ async function run() {
 
     setupRoutes(app, healthService, powerService)
 
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {
         console.log(`Server app listening on port ${port}`)
     })
 }

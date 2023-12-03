@@ -1,0 +1,10 @@
+{
+    "ewelink": {
+        "email": "",
+        "password": "",
+        "region": "",
+        "app_id": "",
+        "app_secret": "",
+	"device_id": ""
+    }
+}

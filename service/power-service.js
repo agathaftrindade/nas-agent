@@ -1,23 +1,31 @@
 const { ListTablesCommand } = require("@aws-sdk/client-dynamodb")
 const { DynamoDBDocument, PutCommand, DeleteCommand } = require("@aws-sdk/lib-dynamodb")
+const ewelink = require('ewelink-api')
+
+const config = require('../config.json')
 
 const TABLE_NAME = 'PowerCommands'
 const DEVICE = 'nas-agent'
+const SONOFF_1CH_ID = config.ewelink.device_id
 
-// function sonoffConnection() {
-//     const connection = new ewelink({
-//         email: '',
-//         password: '',
-//         region: 'us',
-//     })
+function sonoffConnection() {
 
-//     return connection
-// }
+    const connection = new ewelink({
+        email: config.ewelink.email,
+        password: config.ewelink.password,
+        region: config.ewelink.region,
+        APP_ID: config.ewelink.app_id,
+        APP_SECRET: config.ewelink.app_secret
+    })
+
+    return connection
+}
 
 module.exports = class PowerService {
     constructor(dynamoDB) {
         this.dynamoDB = dynamoDB
         this.docClient = DynamoDBDocument.from(dynamoDB)
+        this.sonoff = sonoffConnection()
     }
 
     async fetchCommand() {
@@ -56,7 +64,13 @@ module.exports = class PowerService {
     }
 
     async powerOn() {
-        // TOOD activate sonoff
+
+        await Promise.all([
+            this.sonoff.setDevicePowerState(SONOFF_1CH_ID, 'on', '1'),
+            new Promise(resolve => setTimeout(resolve, 500))
+        ])
+
+        await this.sonoff.setDevicePowerState(SONOFF_1CH_ID, 'off', '1')
     }
 
     async powerOff() {
