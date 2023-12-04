@@ -4,7 +4,8 @@ const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const HealthService = require('../service/health-service')
 const PowerService = require('../service/power-service')
 
-const INSERT_INTERVAL_SECONDS = 10
+const INSERT_INTERVAL_SECONDS = 180
+const FETCH_INTERVAL_SECONDS = 180
 
 async function publishHealth (healthService) {
     await healthService.publishRunning()
@@ -39,7 +40,7 @@ async function run() {
 
     const powerInterval = setInterval(() => {
         checkCommands(healthService, powerService)
-    }, INSERT_INTERVAL_SECONDS * 1000)
+    }, FETCH_INTERVAL_SECONDS * 1000)
 
     publishHealth(healthService)
     checkCommands(healthService, powerService)

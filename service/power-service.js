@@ -66,11 +66,11 @@ module.exports = class PowerService {
     async powerOn() {
 
         await Promise.all([
-            this.sonoff.setDevicePowerState(SONOFF_1CH_ID, 'on', '1'),
+            this.sonoff.setDevicePowerState(SONOFF_1CH_ID, 'on'),
             new Promise(resolve => setTimeout(resolve, 500))
         ])
 
-        await this.sonoff.setDevicePowerState(SONOFF_1CH_ID, 'off', '1')
+    	// await this.sonoff.setDevicePowerState(SONOFF_1CH_ID, 'off', '1')
     }
 
     async powerOff() {
