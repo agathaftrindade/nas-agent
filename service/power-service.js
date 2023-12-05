@@ -4,7 +4,7 @@ const ewelink = require('ewelink-api')
 
 const TABLE_NAME = 'PowerCommands'
 const DEVICE = 'nas-agent'
-const SONOFF_1CH_ID = config.ewelink.device_id
+const SONOFF_1CH_ID = process.env.EWELINK_DEVICE_ID
 
 function sonoffConnection() {
 
