@@ -5,7 +5,7 @@ const HealthService = require('../service/health-service')
 const PowerService = require('../service/power-service')
 
 const INSERT_INTERVAL_SECONDS = 180
-const FETCH_INTERVAL_SECONDS = 180
+const FETCH_INTERVAL_SECONDS = 30
 
 async function publishHealth (healthService) {
     await healthService.publishRunning()
