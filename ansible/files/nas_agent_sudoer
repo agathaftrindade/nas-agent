@@ -1,0 +1,3 @@
+## user is allowed to execute halt and reboot 
+nas_agent ALL=(ALL:ALL) NOPASSWD: /sbin/shutdown
+agatha ALL=(ALL:ALL) NOPASSWD: /sbin/shutdown

@@ -1,0 +1,9 @@
+[Unit]
+Description=NAS Agent
+After=network.target auditd.service
+
+[Service]
+User=nas_agent
+ExecStart=/usr/bin/node index.js agent
+WorkingDirectory=/opt/apps/nas-agent
+EnvironmentFile=/etc/nas-agent.env

@@ -1,0 +1,88 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    NODEJS_VERSION: "16"
+  tasks:
+    - name: Install the gpg key for nodejs LTS
+      apt_key:
+        url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+        state: present
+
+    - name: Install the nodejs LTS repos
+      apt_repository:
+        repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
+        state: present
+        update_cache: yes
+
+    - name: Update apt repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Install the nodejs
+      apt:
+        pkg:
+        - git
+        - nodejs
+
+    - name: Create linux user
+      user:
+        name: nas_agent
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: 'https://github.com/agathaftrindade/nas-agent.git'
+        dest: /opt/apps/nas-agent
+
+    - name: Chown app folder
+      ansible.builtin.file:
+        path: /opt/apps/nas-agent
+        owner: root
+        group: root
+        mode: '0655'
+
+    - name: Install dependencies
+      npm:
+        path: /opt/apps/nas-agent
+
+    - name: Allow nas_agent to shutdown system
+      ansible.builtin.copy:
+        src: ./files/nas_agent_sudoer
+        dest: /etc/sudoers.d/nas_agent_sudoer
+        owner: root
+        group: root
+        mode: '0220'
+
+    - name: Config Systemd Unit
+      ansible.builtin.copy:
+        src: ./files/nas-agent.service
+        dest: /etc/systemd/system/nas-agent.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload and enable service
+      ansible.builtin.systemd_service:
+        state: started
+        enabled: true
+        daemon_reload: true
+        name: nas-agent
+
+  # - name: Deploy nodejs app
+  #   become: True                   # Switch to the root user for executing tasks
+  #   become_user: arun              # Set the user as "arun" to perform tasks
+  #   tasks:                         # List of tasks to be performed
+  #   - name: unpack the nodejs file
+  #     unarchive:                  # Unpack the Node.js app
+  #       src:
+  #       dest: /home/arun
+  #   - name: Start the application
+  #     command:                    # Start the Node.js app
+  #       chdir: /home/arun/packages/app
+  #       cmd: node server
+  #     async: 1000                 # Run the command asynchronously
+  #     poll: 0                     # Do not wait for the command to finish
+  #   - name: Ensure app is running
+  #     shell: ps aux | grep node   # Check if the app is running
+  #     register: app_status        # Register the output of the command as a variable
+  #   - debug: msg={{app_status.stdout_lines}} # Print the output of the previous task for debugging purposes

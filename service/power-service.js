@@ -73,7 +73,8 @@ module.exports = class PowerService {
 
     async powerOff() {
         console.log('shutting down')
-        process.exit()
+        require('child_process').exec('sudo /sbin/shutdown now', function (msg) { console.log(msg) });
+
     }
 
     async schedulePoweroff() {

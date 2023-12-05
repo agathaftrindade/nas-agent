@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Ensure boto and boto3 modules are installed
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - boto3
+        - botocore
+    - name: Create HealthUpdates table
+      dynamodb_table:
+        name: HealthUpdates
+        hash_key_name: Device
+        hash_key_type: STRING
+        read_capacity: 1
+        write_capacity: 1
+
+    - name: Create PowerCommands table
+      dynamodb_table:
+        name: PowerCommands
+        hash_key_name: Device
+        hash_key_type: STRING
+        # range_key_name: Timestamp
+        # range_key_type: NUMBER
+        read_capacity: 1
+        write_capacity: 1
