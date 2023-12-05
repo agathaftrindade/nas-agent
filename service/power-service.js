@@ -2,8 +2,6 @@ const { ListTablesCommand } = require("@aws-sdk/client-dynamodb")
 const { DynamoDBDocument, PutCommand, DeleteCommand } = require("@aws-sdk/lib-dynamodb")
 const ewelink = require('ewelink-api')
 
-const config = require('../config.json')
-
 const TABLE_NAME = 'PowerCommands'
 const DEVICE = 'nas-agent'
 const SONOFF_1CH_ID = config.ewelink.device_id
@@ -11,11 +9,11 @@ const SONOFF_1CH_ID = config.ewelink.device_id
 function sonoffConnection() {
 
     const connection = new ewelink({
-        email: config.ewelink.email,
-        password: config.ewelink.password,
-        region: config.ewelink.region,
-        APP_ID: config.ewelink.app_id,
-        APP_SECRET: config.ewelink.app_secret
+        email: process.env.EWELINK_EMAIL,
+        password: process.env.EWELINK_PASSWORD,
+        region: process.env.EWELINK_REGION,
+        APP_ID: process.env.EWELINK_APP_ID,
+        APP_SECRET: process.env.EWELINK_APP_SECRET
     })
 
     return connection
