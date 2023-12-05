@@ -53,8 +53,7 @@ module.exports = class PowerService {
         const command = new DeleteCommand({
             TableName: TABLE_NAME,
             Key: {
-                'Device': device,
-                'Timestamp': timestamp
+                'Device': device
             }
         })
 

@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/petite-vue?module'
 
-const MAX_INSERT_AGE_SECONDS = 20
+const MAX_INSERT_AGE_SECONDS = 300 // 5min
 const UPDATE_INTERVAL_SECONDS = 10
 const COMMAND_TIME_LIMIT_SECONDS = 10
 
